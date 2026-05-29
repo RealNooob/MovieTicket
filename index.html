@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MovieTicket - Capstone Design Full Version (Schedule Add Mode)</title>
+    <title>MovieTicket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,6 +12,17 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <style>
+        #movie-grid::-webkit-scrollbar {
+
+display: none;
+
+}
+
+#movie-grid {
+
+scrollbar-width: none;
+
+}
         body { background-color: #121212; color: #ffffff; font-family: 'Noto Sans KR', sans-serif; }
         .cgv-red { color: #ff3d47; }
         .bg-cgv-red { background-color: #ff3d47; }
@@ -21,11 +32,107 @@
         #cinema-map-container { height: 350px; width: 100%; border-radius: 12px; z-index: 10; border: 1px solid #374151; }
         .leaflet-popup-content-wrapper { background: #1a1a1a; color: #fff; border: 1px solid #4b5563; }
         .leaflet-popup-tip { background: #1a1a1a; }
+        .movie-card {
+
+transition:
+transform 0.4s ease,
+box-shadow 0.4s ease;
+
+transform-style: preserve-3d;
+
+will-change: transform;
+
+}
+
+        .movie-card:hover {
+
+transform:
+perspective(1000px)
+rotateX(4deg)
+rotateY(-4deg)
+translateY(-10px)
+scale(1.03);
+
+box-shadow:
+0 25px 50px rgba(0,0,0,0.6),
+0 0 30px rgba(255,0,0,0.25);
+
+} 
+        .view-section {
+
+    animation: fadeSlide 0.45s ease;
+
+}
+
+@keyframes fadeSlide {
+
+    from {
+
+        opacity: 0;
+        transform: translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+        transform: translateY(0);
+
+    }
+
+}
     </style>
 </head>
-<body>
+<div id="initial-loader"
+class="fixed inset-0 bg-black z-[99999]
+flex flex-col items-center justify-center">
 
-    <header class="bg-cgv-dark border-b border-gray-800 sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+    <div class="relative">
+
+        <div class="w-24 h-24
+        border-4 border-red-500/30
+        rounded-full">
+        </div>
+
+        <div class="absolute inset-0
+        w-24 h-24
+        border-4 border-red-500
+        border-t-transparent
+        rounded-full
+        animate-spin">
+        </div>
+
+    </div>
+
+    <h1 class="mt-8 text-3xl font-black tracking-[0.12em] text-center">
+
+        LOADING
+    
+    </h1>
+
+    <p class="mt-3 text-gray-500 text-sm text-center">
+
+        MovieTicket
+
+    </p>
+
+</div>
+
+<header class="backdrop-blur-2xl
+bg-black/30
+border-b border-white/10
+sticky top-0 z-50
+px-8 py-4
+flex justify-between items-center
+shadow-[0_0_40px_rgba(255,255,255,0.03)]">
+<div class="absolute inset-0
+bg-gradient-to-r
+from-red-500/5
+via-transparent
+to-purple-500/5
+pointer-events-none">
+</div>
+        
         <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('main-view')">
             <i class="fa-solid fa-film text-2xl cgv-red"></i>
             <span class="text-xl font-bold tracking-wider">MovieTicket</span>
@@ -85,22 +192,76 @@
         </section>
 
         <section id="main-view" class="view-section active space-y-8">
-            <div class="bg-cgv-dark border border-gray-800 p-4 rounded-xl flex flex-col md:flex-row gap-3 items-center justify-between">
-                <div class="flex items-center space-x-2 text-gray-400 text-sm">
-                    <i class="fa-solid fa-circle-nodes cgv-red"></i>
-                    <span>반응형 대작 개봉 타겟 빅데이터 연동 시스템</span>
+            <div class="relative overflow-hidden rounded-3xl border border-gray-800 bg-gradient-to-r from-black via-neutral-900 to-red-950 p-8 min-h-[360px] flex items-center">
+
+                <div class="max-w-xl z-10">
+                    <p class="text-red-400 font-bold text-sm tracking-[0.3em] uppercase">
+                        NOW SHOWING
+                    </p>
+            
+                    <h1 class="text-5xl font-black mt-4 leading-tight">
+                        INSIDE OUT 2
+                    </h1>
+            
+                    <p class="text-gray-300 mt-4 leading-relaxed text-sm">
+                        감정 컨트롤 본부에 새로운 감정들이 등장하면서 벌어지는 초대형 감정 모험.
+                    </p>
+            
+                    <div class="flex gap-3 mt-6">
+                        <button class="bg-gradient-to-r from-red-500 to-red-700
+                        hover:scale-105 hover:shadow-[0_0_25px_rgba(255,0,0,0.5)]
+                        transition-all duration-300 px-6 py-3 rounded-xl font-bold transition">
+                            <i class="fa-solid fa-ticket mr-2"></i>
+                            예매하기
+                        </button>
+            
+                        <button class="bg-white/10 hover:bg-white/20 px-6 py-3 rounded-xl font-bold border border-white/10 transition">
+                            <i class="fa-solid fa-circle-info mr-2"></i>
+                            상세정보
+                        </button>
+                    </div>
                 </div>
-                <div class="relative w-full md:w-96">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" id="search-input" onkeyup="filterMovies()" class="w-full bg-neutral-900 border border-gray-700 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-red-500" placeholder="제목, 장르, 배우 이름으로 영화 검색...">
+            
+                <div class="absolute inset-0 opacity-30 bg-cover bg-center"
+                     style="background-image:url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1600');">
                 </div>
+            
             </div>
 
             <div>
                 <h3 class="text-xl font-bold mb-6 flex items-center"><span class="w-1 h-5 bg-cgv-red mr-2 inline-block"></span>현재 상영작 박스오피스</h3>
-                <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+                <div class="flex gap-4 mb-8">
+
+                    <input
+                    type="text"
+                    id="movie-search"
+                    placeholder="영화 검색..."
+                
+                    class="flex-1 bg-black/40
+                    border border-white/10
+                    rounded-2xl px-5 py-4
+                    outline-none
+                    focus:border-red-500">
+                
+                    <select
+                    id="genre-filter"
+                
+                    class="bg-black/40
+                    border border-white/10
+                    rounded-2xl px-5 py-4">
+                
+                        <option value="">전체 장르</option>
+                        <option value="액션">액션</option>
+                        <option value="SF">SF</option>
+                        <option value="드라마">드라마</option>
+                
+                    </select>
+                
+                </div>
+                <div class="relative">
+                    <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 pb-4 px-0">
+                        </div>
+                </div>
             </div>
         </section>
 
@@ -127,9 +288,14 @@
                     <div class="space-y-1.5">
                         <p class="text-xs font-bold text-gray-400"><i class="fa-brands fa-youtube text-red-500 mr-1"></i> 메인 예고편 오피셜 트레일러 (실시간 재생 지원)</p>
                         <div class="relative aspect-video w-full rounded-xl overflow-hidden border border-gray-800 bg-black">
-                            <iframe id="detail-video-iframe" class="absolute inset-0 w-full h-full" src="" frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                                sandbox="allow-scripts allow-same-origin allow-presentation" allowfullscreen></iframe></div>
+                            <iframe
+                            id="detail-video-iframe"
+                            class="absolute inset-0 w-full h-full"
+                            src=""
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                            </iframe></div>
                     </div>
 
                     <button onclick="openTheaterSelectionView()" class="w-full bg-cgv-red hover:bg-red-600 text-white font-extrabold py-3.5 rounded-xl transition text-sm shadow-md flex items-center justify-center space-x-2">
@@ -477,35 +643,129 @@
 
         // Global Movie Database
         let movies = [
-            {
-                id: "M-01",
-                title: "인사이드 아웃 2",
-                genre: "애니메이션, 코미디, 판타지",
-                director: "켈시 맨",
-                actors: "에이미 포에러, 마야 호크",
-                runtime: "96분",
-                grade: "전체 관람가",
-                plot: "고등학교 진학을 앞둔 사춘기 Riley의 마음에 불안(Anxiety), 당황, 부럽, 따분 등 새로운 감정들이 나타나면서 기존 감정들과 충돌하는 대혼란의 모험 이야기.",
-                poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=600&auto=format&fit=crop",
-                trailer: "https://www.youtube.com/embed/1Ct9v7S_W4I",
-                reviews: [
-                    { user: "pixar_fan", text: "불안이 캐릭터 묘사가 너무 직관적이고 공감돼요 ㅜㅜ", score: 5 },
-                    { user: "movie_critic", text: "1편 명성에 버금가는 영리한 패러다임 확장.", score: 5 }
-                ]
-            },
-            {
-                id: "M-02",
-                title: "언차티드",
-                genre: "액션, 어드벤처",
-                director: "루벤 플레셔",
-                actors: "톰 홀랜드, 마크 월버그",
-                runtime: "116분",
-                grade: "12세 관람가",
-                plot: "트레저 헌터 설리반과 함께 500년 전 사라진 황금을 찾아 전 세계를 넘나드는 위험천만한 실시간 액션 어드벤처 스릴러.",
-                poster: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=600&auto=format&fit=crop",
-                trailer: "https://www.youtube.com/embed/eHp3MbsCb3M",
-                reviews: [{ user: "kim**", text: "톰 홀랜드 액션 연기가 대단해요!", score: 4 }]
-            }
+        {
+    id: "M-01",
+    title: "인사이드 아웃 2",
+    genre: "애니메이션, 코미디, 판타지",
+    director: "켈시 맨",
+    actors: "에이미 포엘러, 마야 호크",
+    runtime: "96분",
+    grade: "전체 관람가",
+    plot: "사춘기에 접어든 라일리의 마음속에 새로운 감정들이 등장하며 벌어지는 감동적인 성장 이야기.",
+    poster: "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",
+    trailer: "https://tube.rvere.com/embed?v=LEjhY15eCx0",
+    reviews: [
+        {
+            user: "emotion_fan",
+            text: "불안 캐릭터가 진짜 현실적임.",
+            score: 5
+        },
+        {
+            user: "pixar_lover",
+            text: "웃기면서도 감동적이다.",
+            score: 5
+        }
+    ]
+},
+
+{
+    id: "M-02",
+    title: "인터스텔라",
+    genre: "SF, 드라마",
+    director: "크리스토퍼 놀란",
+    actors: "매튜 맥커너히, 앤 해서웨이",
+    runtime: "169분",
+    grade: "12세 관람가",
+    plot: "인류의 미래를 위해 우주로 떠난 탐사팀의 경이롭고 감동적인 여정.",
+    poster: "https://image.tmdb.org/t/p/original/rAiYTfKGqDCRIIqo664sY9XZIvQ.jpg",
+    trailer: "https://tube.rvere.com/embed?v=zSWdZVtXT7E",
+    reviews: [
+        {
+            user: "space_movie",
+            text: "인생 최고의 SF 영화.",
+            score: 5
+        },
+        {
+            user: "nolanfan",
+            text: "OST와 연출이 미쳤다.",
+            score: 5
+        }
+    ]
+},
+
+{
+    id: "M-03",
+    title: "듄: 파트 2",
+    genre: "SF, 액션, 모험",
+    director: "드니 빌뇌브",
+    actors: "티모시 샬라메, 젠데이아, 오스틴 버틀러",
+    runtime: "166분",
+    grade: "12세 관람가",
+    plot: "폴 아트레이드가 프레멘과 함께 운명을 받아들이며 거대한 전쟁에 뛰어드는 이야기.",
+    poster: "https://image.tmdb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg",
+    trailer: "https://tube.rvere.com/embed?v=Way9Dexny3w",
+    reviews: [
+        {
+            user: "imax_fan",
+            text: "무조건 아이맥스로 봐야 하는 영화.",
+            score: 5
+        },
+        {
+            user: "cinema_addict",
+            text: "영상미와 사운드가 압도적이다.",
+            score: 5
+        }
+    ]
+},
+{
+    id: "M-04",
+    title: "세븐",
+    genre: "범죄, 스릴러, 미스터리",
+    director: "데이비드 핀처",
+    actors: "브래드 피트, 모건 프리먼",
+    runtime: "127분",
+    grade: "청소년 관람불가",
+    plot: "7대 죄악을 모티브로 한 연쇄살인 사건을 추적하는 두 형사의 이야기.",
+    poster: "https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EngEmJskVUO.jpg",
+    trailer: "https://tube.rvere.com/embed?v=KPOuJGkpblk",
+    reviews: [
+        {
+            user: "thriller_master",
+            text: "긴장감이 끝까지 미쳤다.",
+            score: 5
+        },
+        {
+            user: "crime_movie",
+            text: "역대급 스릴러.",
+            score: 5
+        }
+    ]
+},
+
+{
+    id: "M-05",
+    title: "기생충",
+    genre: "드라마, 스릴러",
+    director: "봉준호",
+    actors: "송강호, 이선균, 조여정",
+    runtime: "132분",
+    grade: "15세 관람가",
+    plot: "전혀 다른 두 가족이 얽히며 벌어지는 예측 불가능한 이야기.",
+    poster: "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    trailer: "https://tube.rvere.com/embed?v=isOGD_7hNIY",
+    reviews: [
+        {
+            user: "kmovie_best",
+            text: "봉준호 감독의 걸작.",
+            score: 5
+        },
+        {
+            user: "oscar_fan",
+            text: "한국 영화 역사상 최고의 작품.",
+            score: 5
+        }
+    ]
+}
         ];
 
         // Infrastructure Location Nodes Matrix Map
@@ -522,7 +782,7 @@
             },
             { 
                 regionId: "R-02", 
-                regionName: "부산/경남", 
+                regionName: "부산", 
                 center: [35.1796, 129.0756],
                 theaters: [
                     { name: "CGV 센텀시티", coords: [35.1689, 129.1308] },
@@ -556,9 +816,62 @@
         let selectedSchedule = null;
         let selectedSeat = null;
 
+        window.addEventListener("load", () => {
+
+setTimeout(() => {
+
+    const loader =
+    document.getElementById("initial-loader");
+
+    loader.style.opacity = "0";
+
+    loader.style.transition =
+    "opacity 0.6s ease";
+
+    setTimeout(() => {
+
+        loader.remove();
+
+    }, 600);
+
+}, 1800);
+
+});
+
         window.onload = function() {
             initAppSession();
             renderMovieGrid();
+            document.getElementById("movie-search")
+.addEventListener("input", filterMovies);
+
+document.getElementById("genre-filter")
+.addEventListener("change", filterMovies);
+
+function filterMovies() {
+
+    const search =
+    document.getElementById("movie-search")
+    .value.toLowerCase();
+
+    const genre =
+    document.getElementById("genre-filter")
+    .value;
+
+    const filtered = movies.filter(movie => {
+
+        const matchTitle =
+        movie.title.toLowerCase().includes(search);
+
+        const matchGenre =
+        genre === "" || movie.genre === genre;
+
+        return matchTitle && matchGenre;
+
+    });
+
+    renderMovieGrid(filtered);
+
+}
             initLeafletMapInfrastructure();
         };
 
@@ -583,26 +896,72 @@
         }
 
         function navigateTo(viewId) {
-            if ((viewId === 'profile-view' || viewId === 'admin-view') && !currentUser) {
-                alert("로그인 세션 인증 정보가 식별되지 않았습니다.");
-                navigateTo('auth-view');
-                return;
-            }
 
-            document.querySelectorAll(".view-section").forEach(section => {
-                section.classList.remove("active");
-            });
-            document.getElementById(viewId).classList.add("active");
+// Stop trailer ONLY when leaving detail page
+if(viewId !== "detail-view") {
 
-            if (viewId === "theater-view" && cinemaMap) {
-                setTimeout(() => { cinemaMap.invalidateSize(); }, 200);
-            }
-            if (viewId === "admin-view") {
-                renderAdminDashboard();
-                initAdminDropdownFilters();
-            }
-            window.scrollTo(0, 0);
-        }
+    const iframe =
+    document.getElementById("detail-video-iframe");
+
+    if(iframe) {
+
+        iframe.src = "";
+
+    }
+
+}
+
+// Login protection
+if (
+    (viewId === 'profile-view' ||
+    viewId === 'admin-view')
+    && !currentUser
+) {
+
+    alert("로그인 세션 인증 정보가 식별되지 않았습니다.");
+
+    navigateTo('auth-view');
+
+    return;
+
+}
+
+// Hide all sections
+document.querySelectorAll(".view-section")
+.forEach(section => {
+
+    section.classList.remove("active");
+
+});
+
+// Show selected section
+document.getElementById(viewId)
+.classList.add("active");
+
+// Refresh map size
+if(viewId === "theater-view" && cinemaMap) {
+
+    setTimeout(() => {
+
+        cinemaMap.invalidateSize();
+
+    }, 200);
+
+}
+
+// Admin dashboard rendering
+if(viewId === "admin-view") {
+
+    renderAdminDashboard();
+
+    initAdminDropdownFilters();
+
+}
+
+// Scroll to top
+window.scrollTo(0, 0);
+
+}
 
         function handleNavAuthClick() {
             if (currentUser) {
@@ -645,7 +1004,7 @@
                 isAdmin: true
             };
             initAppSession();
-            alert(`환영합니다, ${currentUser.name}님! 시스템 통합 인증에 성공하였습니다.`);
+            showToast(`${currentUser.name}님 환영합니다!`);
             navigateTo("main-view");
         }
 
@@ -664,29 +1023,128 @@
         }
 
         function renderMovieGrid() {
-            const grid = document.getElementById("movie-grid");
-            grid.innerHTML = "";
-            movies.forEach(movie => {
-                grid.innerHTML += `
-                    <div onclick="openMovieDetail('${movie.id}')" class="bg-cgv-dark border border-gray-800 rounded-xl overflow-hidden group hover:border-red-500 transition-all duration-300 shadow flex flex-col cursor-pointer text-xs">
-                        <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900">
-                            <img src="${movie.poster}" alt="포스터" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <div class="absolute top-1.5 left-1.5 bg-black/70 px-1.5 py-0.5 rounded text-[9px] font-bold text-yellow-400 border border-yellow-500/30">${movie.grade}</div>
-                        </div>
-                        <div class="p-3 flex-1 flex flex-col justify-between space-y-2">
-                            <div>
-                                <h4 class="font-bold text-sm text-white group-hover:text-red-400 transition truncate">${movie.title}</h4>
-                                <p class="text-[10px] text-gray-400 mt-0.5 line-clamp-1">${movie.genre} | ${movie.runtime}</p>
-                            </div>
-                            <div class="flex items-center justify-between text-[10px] pt-1.5 border-t border-gray-900 text-gray-400">
-                                <span><i class="fa-solid fa-star text-yellow-500 mr-0.5"></i> 에그 99%</span>
-                                <span class="text-red-400 font-bold group-hover:text-white transition">예매하기</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
+    const grid = document.getElementById("movie-grid");
+    grid.innerHTML = "";
+
+    movies.forEach(movie => {
+        grid.innerHTML += `
+        <div
+        onclick="openMovieDetail('${movie.id}')"
+        class="movie-card
+        w-full                   bg-cgv-dark
+        border border-gray-800
+        rounded-xl overflow-hidden
+        group hover:border-red-500
+        transition-all duration-300
+        shadow flex flex-col
+        cursor-pointer text-xs">
+
+            <div class="relative aspect-[3/4] overflow-hidden bg-neutral-900">
+                <img
+                src="${movie.poster}"
+                alt="포스터"
+                class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+
+                <div class="absolute top-1.5 left-1.5 bg-black/70 px-1.5 py-0.5 rounded text-[9px] font-bold text-yellow-400 border border-yellow-500/30">
+                    ${movie.grade}
+                </div>
+            </div>
+
+            <div class="p-3 flex-1 flex flex-col justify-between space-y-2">
+                <div>
+                    <h4 class="font-bold text-sm text-white group-hover:text-red-400 transition truncate">
+                        ${movie.title}
+                    </h4>
+                    <p class="text-[10px] text-gray-400 mt-0.5 line-clamp-1">
+                        ${movie.genre} | ${movie.runtime}
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-between text-[10px] pt-1.5 border-t border-gray-900 text-gray-400">
+                    <span>
+                        <i class="fa-solid fa-star text-yellow-500 mr-0.5"></i>
+                        에그 99%
+                    </span>
+                    <span class="text-red-400 font-bold group-hover:text-white transition">
+                        예매하기
+                    </span>
+                </div>
+            </div>
+
+        </div>
+        `;
+    });
+}
+function scrollMovies(direction) {
+
+const grid =
+document.getElementById("movie-grid");
+
+const scrollAmount = 900;
+
+// RIGHT
+if(direction === 1) {
+
+    // If reached end
+    if(
+        grid.scrollLeft +
+        grid.clientWidth >=
+        grid.scrollWidth - 10
+    ) {
+
+        // Jump back to start
+        grid.scrollTo({
+
+            left: 0,
+            behavior: "smooth"
+
+        });
+
+    }
+
+    else {
+
+        grid.scrollBy({
+
+            left: scrollAmount,
+            behavior: "smooth"
+
+        });
+
+    }
+
+}
+
+// LEFT
+else {
+
+    // If at start
+    if(grid.scrollLeft <= 10) {
+
+        // Jump to end
+        grid.scrollTo({
+
+            left: grid.scrollWidth,
+            behavior: "smooth"
+
+        });
+
+    }
+
+    else {
+
+        grid.scrollBy({
+
+            left: -scrollAmount,
+            behavior: "smooth"
+
+        });
+
+    }
+
+}
+
+}
 
         function filterMovies() {
             const query = document.getElementById("search-input").value.toLowerCase();
@@ -897,24 +1355,58 @@
         }
 
         function executeFinalPaymentProcessing() {
-            selectedSchedule.reservedSeats.push(selectedSeat);
-            const ticketPrice = selectedSchedule.price ? selectedSchedule.price : 14000;
 
-            const newTicket = {
-                ticketId: "TKT-" + Math.floor(Math.random() * 900000 + 100000),
-                movieTitle: selectedMovie.title,
-                theaterName: selectedSchedule.theaterName,
-                hall: selectedSchedule.hall,
-                time: selectedSchedule.time,
-                seatId: selectedSeat,
-                price: ticketPrice,
-                date: new Date().toLocaleString('ko-KR')
-            };
+document.body.innerHTML += `
+<div id="loading-overlay"
+class="fixed inset-0 bg-black/90 z-[999]
+flex flex-col items-center justify-center">
 
-            userTickets.unshift(newTicket);
-            renderUserTicketsContainer();
-            navigateTo("receipt-view");
-        }
+    <div class="w-20 h-20 border-4
+    border-red-500 border-t-transparent
+    rounded-full animate-spin"></div>
+
+    <p class="mt-6 text-white text-sm">
+        결제 서버 연결 중...
+    </p>
+
+</div>
+`;
+
+setTimeout(() => {
+
+    document.getElementById('loading-overlay').remove();
+
+    selectedSchedule.reservedSeats.push(selectedSeat);
+
+    const ticketPrice =
+    selectedSchedule.price ? selectedSchedule.price : 14000;
+
+    const newTicket = {
+        ticketId: "TKT-" + Math.floor(Math.random() * 900000 + 100000),
+
+        movieTitle: selectedMovie.title,
+
+        theaterName: selectedSchedule.theaterName,
+
+        hall: selectedSchedule.hall,
+
+        time: selectedSchedule.time,
+
+        seatId: selectedSeat,
+
+        price: ticketPrice,
+
+        date: new Date().toLocaleString('ko-KR')
+    };
+
+    userTickets.unshift(newTicket);
+
+    renderUserTicketsContainer();
+
+    navigateTo("receipt-view");
+
+}, 2500);
+}
 
         function renderUserTicketsContainer() {
             const container = document.getElementById("profile-ticket-container");
@@ -955,7 +1447,7 @@
 
             userTickets.splice(tIdx, 1);
             renderUserTicketsContainer();
-            alert("환불 및 예매 데이터 소거가 완결되었습니다.");
+            showToast("예매가 취소되었습니다.");
         }
 
         function openTicketInfoModal(ticketId) {
@@ -973,6 +1465,21 @@
             `;
             document.getElementById("ticket-info-modal").classList.remove("hidden");
         }
+        function showToast(message) {
+
+const toast = document.createElement('div');
+
+toast.className =
+'fixed top-6 right-6 bg-green-500 text-white px-5 py-3 rounded-xl shadow-2xl z-[9999]';
+
+toast.innerText = message;
+
+document.body.appendChild(toast);
+
+setTimeout(() => {
+    toast.remove();
+}, 3000);
+}
 
         function closeTicketInfoModal() {
             document.getElementById("ticket-info-modal").classList.add("hidden");
@@ -1173,7 +1680,7 @@
                     "편성 시간": s.time,
                     "티켓 가격": costPrice,
                     "판매 좌석수": s.reservedSeats.length,
-                    "정산 금액(원)": s.reservedSeats.length * costPrice
+                    "정산 금액(원)": s.reservedSeats.length * caostPrice
                 };
             });
 
